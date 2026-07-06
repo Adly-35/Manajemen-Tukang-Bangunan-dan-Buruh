@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suntik Absensi - WorkManager</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>.man-box { max-width: 480px; margin: 30px auto; padding: 15px; }</style>
+</head>
+<body>
+    <div class="man-box">
+        <button class="btn" onclick="window.location.href='index.html'" style="margin-bottom:15px;"><i class="fas fa-arrow-left"></i> Kembali</button>
+        <div class="card">
+            <h3>Suntik Absensi Masa Lalu</h3>
+            <div class="fg"><label>Karyawan</label><select id="m-kar" class="input"></select></div>
+            <div class="fg"><label>Tanggal Terlewat</label><input type="date" id="m-tgl" class="input"></div>
+            <div class="form-row">
+                <div class="fg"><label>Status</label><select id="m-stat" class="input"><option>Hadir</option><option>Izin</option><option>Sakit</option></select></div>
+                <div class="fg"><label>Bobot Hari</label><select id="m-bobot" class="input"><option value="full">1.0 Hari (Full Day)</option><option value="half">0.5 Hari (Half Day)</option></select></div>
+            </div>
+            <button class="btn btn-p" onclick="simpanManual()" style="width:100%; justify-content:center; margin-top:10px;"><i class="fas fa-save"></i> Suntik Absensi</button>
+        </div>
+    </div>
+    <script>
+        let D = {k:[], a:[], p:[], g:[], s:{}};
+        window.onload = function() {
+            if (sessionStorage.getItem("user_logged") !== "true") { window.location.href = "login.html"; return; }
+            let x = localStorage.getItem('wm_data');
+            if(x) { D = JSON.parse(x); document.getElementById('m-kar').innerHTML = D.k.filter(k=>k.s==='Aktif').map(k=>`<option value="${k.id}">${k.n}</option>`).join(''); }
+            document.getElementById('m-tgl').value = new Date().toISOString().split('T')[0];
+        };
+        function simpanManual() {
+            let id = parseInt(document.getElementById('m-kar').value), tgl = document.getElementById('m-tgl').value;
+            D.a = D.a.filter(a => !(a.k === id && a.tg === tgl));
+            D.a.push({ id: Date.now(), k: id, tg: tgl, s: document.getElementById('m-stat').value, jm: "08:00", jk: "17:00", tp: document.getElementById('m-bobot').value, ket: "Susulan" });
+            localStorage.setItem('wm_data', JSON.stringify(D)); alert('Data berhasil disisipkan ke database lokal!');
+        }
+    </script>
+</body>
+</html>
