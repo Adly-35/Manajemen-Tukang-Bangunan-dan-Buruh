@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - WorkManager</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>.login-box { max-width: 360px; margin: 80px auto; padding: 15px; }</style>
+</head>
+<body style="background: #0f172a;">
+    <div class="login-box">
+        <div class="card" style="border-top: 4px solid #4f46e5;">
+            <h2 style="text-align:center; margin-bottom: 20px; color:#1e293b;">Sistem Login</h2>
+            <div class="fg"><label>Username</label><input type="text" id="user" class="input" placeholder="owner / mandor"></div>
+            <div class="fg"><label>Password</label><input type="password" id="pass" class="input" placeholder="123"></div>
+            <button class="btn btn-p" onclick="prosesLogin()" style="width: 100%; justify-content: center; margin-top: 10px;">Masuk</button>
+        </div>
+    </div>
+    <script>
+        function prosesLogin() {
+            let u = document.getElementById('user').value.toLowerCase(), p = document.getElementById('pass').value;
+            if((u === "owner" && p === "123") || (u === "mandor" && p === "123")) {
+                sessionStorage.setItem("user_level", u === "owner" ? "Owner" : "Mandor");
+                sessionStorage.setItem("user_logged", "true");
+                window.location.href = "index.html";
+            } else { alert("Akun salah! Gunakan username 'owner' atau 'mandor' dengan password '123'."); }
+        }
+    </script>
+</body>
+</html>

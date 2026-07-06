@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkManager WA Cloud</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sb-head">
+            <h1><i class="fas fa-users-cog"></i> WorkManager</h1>
+            <p>WA Messenger Cloud</p>
+        </div>
+        <div class="nav-item active" onclick="showPage('home',this)"><i class="fas fa-home"></i><span>Home</span></div>
+        <div class="nav-item" onclick="showPage('kar',this)"><i class="fas fa-users"></i><span>Karyawan</span></div>
+        <div class="nav-item" onclick="showPage('abs',this)"><i class="fas fa-calendar-check"></i><span>Absensi</span></div>
+        <div class="nav-item" onclick="showPage('pin',this)"><i class="fas fa-hand-holding-usd"></i><span>Pinjaman</span></div>
+        <div class="nav-item" onclick="showPage('gaji',this)"><i class="fas fa-money-bill-wave"></i><span>Gaji</span></div>
+        <div class="nav-item" onclick="showPage('set',this)"><i class="fas fa-cogs"></i><span>Setting</span></div>
+        <div class="nav-item" onclick="window.location.href='input_manual.html'"><i class="fas fa-user-edit"></i><span>Input Manual</span></div>
+        <div class="nav-item" onclick="prosesLogout()" style="margin-top:20px; color:#ef4444;"><i class="fas fa-sign-out-alt"></i><span>Keluar</span></div>
+    </nav>
+
+    <main class="main">
+        <div id="p-home" class="page active">
+            <div class="header"><h2>Dashboard Ringkasan</h2></div>
+            <div class="grid-3">
+                <div class="card card-p"><h3>Karyawan Aktif</h3><p id="h-kar">0</p></div>
+                <div class="card card-g"><h3>Hadir Hari Ini</h3><p id="h-abs">0</p></div>
+                <div class="card card-o"><h3>Total Pinjaman</h3><p id="h-pin">Rp 0</p></div>
+            </div>
+            <div class="card" style="margin-top:20px;">
+                <h3>Aktivitas Absen Terakhir</h3>
+                <div class="table-resp">
+                    <table id="tabel-home">
+                        <thead><tr><th>Karyawan</th><th>Status</th><th>Jam</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="p-kar" class="page">
+            <div class="header">
+                <h2>Manajemen Karyawan</h2>
+                <button class="btn btn-p" onclick="openModal('mKar')"><i class="fas fa-plus"></i> Tambah</button>
+            </div>
+            <div class="card">
+                <input type="text" id="cariKar" class="input" placeholder="Cari nama karyawan..." onkeyup="rKar()">
+                <div class="table-resp" style="margin-top:15px;">
+                    <table id="tabel-kar">
+                        <thead><tr><th>Nama</th><th>NIK</th><th>Jabatan</th><th>Status</th><th>Aksi</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="p-abs" class="page">
+            <div class="header"><h2>Absensi Harian</h2><button class="btn btn-p" onclick="bukaAbsenMassal()"><i class="fas fa-user-check"></i> Absen Massal</button></div>
+            <div class="card">
+                <div class="form-row"><input type="date" id="f-abs-tgl" class="input" onchange="rAbs()"><select id="f-abs-stat" class="input" onchange="rAbs()"><option value="">Semua Status</option><option value="Hadir">Hadir</option><option value="Izin">Izin</option><option value="Sakit">Sakit</option></select></div>
+                <div class="table-resp" style="margin-top:15px;"><table id="tabel-abs"><thead><tr><th>Nama</th><th>Tanggal</th><th>Status</th><th>Jam</th><th>Aksi</th></tr></thead><tbody></tbody></table></div>
+            </div>
+        </div>
+
+        <div id="p-pin" class="page">
+            <div class="header"><h2>Daftar Pinjaman</h2><button class="btn btn-p" onclick="bukaModalPinjam()"><i class="fas fa-hand-holding-usd"></i> Tambah</button></div>
+            <div class="card">
+                <select id="f-pin-stat" class="input" onchange="rPin()"><option value="">Semua</option><option value="Aktif">Aktif</option><option value="Lunas">Lunas</option></select>
+                <div class="table-resp" style="margin-top:15px;"><table id="tabel-pin"><thead><tr><th>Nama</th><th>Tanggal</th><th>Jumlah</th><th>Sisa</th><th>Status</th><th>Aksi</th></tr></thead><tbody></tbody></table></div>
+            </div>
+        </div>
+
+        <div id="p-gaji" class="page">
+            <div class="header"><h2>Kalkulasi Payroll Gaji</h2></div>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="fg"><label>Karyawan</label><select id="gaji-kar" class="input" onchange="hitungGaji()"></select></div>
+                    <div class="fg"><label>Bulan/Tahun</label><input type="month" id="gaji-bulan" class="input" onchange="hitungGaji()"></div>
+                    <div id="v-gaji-detail"></div>
+                </div>
+                <div class="card">
+                    <h3>Riwayat Slip</h3><input type="month" id="f-rekap-bln" class="input" onchange="rRekap()"><div class="table-resp" style="margin-top:10px;"><table id="tabel-rekap"><thead><tr><th>Nama</th><th>Bulan</th><th>Total</th><th>Aksi</th></tr></thead><tbody></tbody></table></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="p-set" class="page">
+            <div class="header"><h2>Pengaturan Utama Sistem</h2></div>
+            <div class="card">
+                <div class="form-row">
+                    <div class="fg"><label>Nama Perusahaan</label><input type="text" id="setNama" class="input"></div>
+                    <div class="fg"><label>Uang Makan</label><input type="number" id="setMakan" class="input"></div>
+                </div>
+                <div class="form-row">
+                    <div class="fg"><label>Uang Transport</label><input type="number" id="setTrans" class="input"></div>
+                    <div class="fg"><label>Jam Masuk Kerja</label><input type="time" id="setBuka" class="input"></div>
+                </div>
+                <div class="fg" style="margin-top:15px; border-top: 1px dashed #cbd5e1; padding-top:15px;">
+                    <label style="color:#25d366; font-weight:700;">Nomor WhatsApp Server Backup</label>
+                    <input type="text" id="setNoWA" class="input" placeholder="Contoh format nomor: 62812345678">
+                    <div class="form-row" style="margin-top:5px;">
+                        <button class="btn btn-s" style="background:#25d366; color:#fff;" onclick="backupKeWA()"><i class="fab fa-whatsapp"></i> Kirim Backup ke WA</button>
+                        <button class="btn btn-p" onclick="openModal('mRestoreWA')"><i class="fas fa-undo"></i> Pulihkan dari Teks WA</button>
+                    </div>
+                </div>
+                <div class="m-foot" style="padding-top:15px; margin-top:15px; border-top:1px solid #e2e8f0;"><button class="btn btn-p" onclick="simpanSet()"><i class="fas fa-save"></i> Simpan Pengaturan</button></div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal" id="mKar"><div class="m-box"><div class="m-head"><h3>Data Karyawan</h3><button class="m-close" onclick="closeModal('mKar')">&times;</button></div><div class="m-body"><input type="hidden" id="mkId"><div class="form-row"><div class="fg"><label>Nama Lengkap</label><input type="text" id="mkNama" class="input"></div><div class="fg"><label>NIK</label><input type="text" id="mkNik" class="input"></div></div><div class="form-row"><div class="fg"><label>Jabatan</label><input type="text" id="mkJab" class="input"></div><div class="fg"><label>Telepon</label><input type="text" id="mkTelp" class="input"></div></div><div class="form-row"><div class="fg"><label>Gaji / Hari</label><input type="number" id="mkGaji" class="input"></div><div class="fg"><label>Status</label><select id="mkStatus" class="input"><option>Aktif</option><option>Cuti</option><option>Nonaktif</option></select></div></div><div class="fg"><label>Alamat</label><textarea id="mkAlamat" rows="2" class="input"></textarea></div></div><div class="m-foot"><button class="btn" onclick="closeModal('mKar')">Batal</button><button class="btn btn-p" onclick="simpanKar()">Simpan</button></div></div></div>
+    <div class="modal" id="mPin"><div class="m-box"><div class="m-head"><h3>Tambah Pinjaman</h3><button class="m-close" onclick="closeModal('mPin')">&times;</button></div><div class="m-body"><div class="form-row"><div class="fg"><label>Karyawan</label><select id="mpKar" class="input"></select></div><div class="fg"><label>Tanggal</label><input type="date" id="mpTgl" class="input"></div></div><div class="form-row"><div class="fg"><label>Jumlah Pinjaman</label><input type="number" id="mpJml" class="input"></div><div class="fg"><label>Potongan per Gaji</label><input type="number" id="mpCicil" class="input"></div></div></div><div class="m-foot"><button class="btn" onclick="closeModal('mPin')">Batal</button><button class="btn btn-p" onclick="simpanPin()">Simpan</button></div></div></div>
+    <div class="modal" id="mAbs"><div class="m-box"><div class="m-head"><h3>Input Absensi Massal</h3><button class="m-close" onclick="closeModal('mAbs')">&times;</button></div><div class="m-body" id="mAbsContent"></div><div class="m-foot"><button class="btn" onclick="closeModal('mAbs')">Batal</button><button class="btn btn-p" onclick="simpanAbsenMassal()">Simpan Semua</button></div></div></div>
+    <div class="modal" id="mRestoreWA"><div class="m-box"><div class="m-head"><h3>Restore Database WA</h3><button class="m-close" onclick="closeModal('mRestoreWA')">&times;</button></div><div class="m-body"><div class="fg"><label>Tempel Teks Backup Panjang dari Chat WA</label><textarea id="txtCodeWA" rows="5" class="input" placeholder="Paste kode acak panjang di sini..."></textarea></div></div><div class="m-foot"><button class="btn" onclick="closeModal('mRestoreWA')">Batal</button><button class="btn btn-s" onclick="prosesRestoreWA()">Mulai Pulihkan</button></div></div></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
